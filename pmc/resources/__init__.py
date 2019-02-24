@@ -35,6 +35,11 @@ class Base:
             assert remove(str(self.path)) != -1
         del self.parent.__dict__[self.path.stem]
 
+    def get(self): pass
+
+    @property
+    def size(self): return None
+
 
 class Directory(Base):
     def __init__(self, name, path, parent):
@@ -91,18 +96,6 @@ class File(Base):
         self.parent = parent
         self.name = self.path.stem
         self.suffix = self.path.suffix
-        self.size = int()
-        self.times = dict()
-        self.update()
-
-    def update(self):
-        stats = self.path.stat()
-        self.size = stats.st_size
-        self.times = {
-            'creation': stats.st_ctime,
-            'modified': stats.st_mtime,
-        }
-        # TODO: maybe add other stuff later
 
     def get(self): return self
 
@@ -117,6 +110,15 @@ class File(Base):
     def openXML(self): return XML(self.path)
 
     def openSQL(self): return DataBase(self.path)
+
+    @property
+    def size(self): return self.path.stat().st_size
+
+    @property
+    def ctime(self): return self.path.stat().st_ctime
+
+    @property
+    def mtime(self): return self.path.stat().st_mtime
 
 
 class Ressources(Directory):
