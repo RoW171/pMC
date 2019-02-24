@@ -4,6 +4,8 @@ __version__ = "0.0.1"
 
 from pyglet.image import load
 
+TSETVERSION = 0
+
 
 def tex_coord(x, y, n=4):
     m = 1.0 / n
@@ -52,6 +54,11 @@ class TextureEngine:
         if self.selectedSet is None: return self.textures[item]
         else: return self.textures[self.selectedSet][item]
 
+    def __setattr__(self, key, value):
+        if key == 'selectedSet' and value is not None and value.corrupted:
+            raise CorruptedTextureSet('')
+        super(TextureEngine, self).__setattr__(key, value)
+
     @staticmethod
     def loadTextures(path):
         collection = Collection()
@@ -70,7 +77,7 @@ class TextureEngine:
 
 
 class TextureSet(dict):
-    def __init__(self, texture, coords): pass
+    def __init__(self, texture, coords): super(TextureSet, self).__init__()
 
 
 
