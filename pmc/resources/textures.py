@@ -28,6 +28,51 @@ class CorruptedTextureSet(Exception): pass
 class TextureSetNotFound(Exception): pass
 
 
+class SpriteNotFound(Exception): pass
+
+
+class Collection(dict):
+    exception = None
+
+    def __getitem__(self, item):
+        try: return super().__getitem__(item)
+        except (KeyError,): raise self.exception("TextureEngine: '{}' not found".format(item))
+
+
+class TextureEngine:
+    def __init__(self, texturePath, spritePath):
+        self.selectedSet = None
+        self.texturePath = texturePath
+        self.spritePath = spritePath
+
+        self.textures = self.loadTextures(self.texturePath)
+        self.sprites = self.loadSprites(self.spritePath)
+
+    def __getitem__(self, item):
+        if self.selectedSet is None: return self.textures[item]
+        else: return self.textures[self.selectedSet][item]
+
+    @staticmethod
+    def loadTextures(path):
+        collection = Collection()
+        collection.exception = TextureSetNotFound
+        for name, file, in path.get().items():
+            tset = file.unzip(['texture.png', 'coords'])
+            collection[name] = TextureSet(texture=tset['texture.png'], coords=tset['coords'])
+        return collection
+
+    @staticmethod
+    def loadSprites(path):
+        collection = Collection()
+        collection.exception = SpriteNotFound
+        for name, file, in path.get().items(): collection[file.name] = load(str(file))
+        return collection
+
+
+class TextureSet(dict):
+    def __init__(self, texture, coords): pass
+
+
 
 
 if __name__ == '__main__': pass
