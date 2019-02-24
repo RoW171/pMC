@@ -115,4 +115,8 @@ class Config(Section, ConfigParser):
             chunksize = ''
         self.saveEntry(section, option + datatype + subdatatype + chunksize, value, saveToFile=saveToFile)
 
+    # noinspection PyTypeChecker
+    def loadTexCoords(self, name): return self.loadEntry('coords', name, datatype=list, subdatatype=int, chunksize=2)
+
+
 if __name__ == '__main__': pass
