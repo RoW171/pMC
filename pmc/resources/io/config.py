@@ -7,30 +7,15 @@ from io import StringIO, TextIOWrapper
 from pathlib import Path
 
 
-class DataTypes:
-    names = {
-        'bool': bool,
-        'int': int,
-        'float': float,
-        'str': str,
-        'list': list,
-        'tuple': tuple,
-    }
-
-    def __call__(self, arg):
-        if type(arg) == str and len(arg) > 0: return self.names[arg]
-        else: return arg.__name__
-
-
 class Section:
     __config = None
     __name = str()
-    __internal = ['__config', '__name', '__internal']
+    __internal = ['__config', '__name', '__internal', '__ignore', '__path', '__laoding']
 
     def __getattribute__(self, item): return super(Section, self).__getattribute__(item)
 
     def __setattr__(self, key, value):
-        if key not in self.__internal and not self.__config.loading:
+        if key not in self.__internal and not self.__config.__loading:
             self.__config.saveHintedEntry(self.__name, key, value)
         super(Section, self).__setattr__(key, value)
 
@@ -38,46 +23,43 @@ class Section:
 
     __setitem__ = __setattr__
 
+    def __contains__(self, item): return item in self.__dict__
+
 
 class Config(Section, ConfigParser):
     def __init__(self, path, ignoreExist=False, loadNow=True):
         super(Config, self).__init__()
-        self.datatypes = DataTypes()
-        self.ignore = ignoreExist
-        self.path = path
-        self.loading = False
-        if loadNow: self(self.path)
+        self.__ignore = ignoreExist
+        self.__path = path
+        self.__loading = False
+        if loadNow: self(self.__path)
 
     def __call__(self, nFile=None):
         if isinstance(nFile, dict):
             self.read_dict(nFile)
-            self.path = 'dict'
+            self.__path = 'dict'
         elif isinstance(nFile, (StringIO, TextIOWrapper,)):
             self.read_file(nFile)
-            self.path = 'memory: ' + str(nFile)
+            self.__path = 'memory: ' + str(nFile)
         elif isinstance(nFile, list):
             self.read_string(nFile.pop())
-            self.path = 'string'
+            self.__path = 'string'
         elif isinstance(nFile, str): nFile = Path(nFile)
         elif isinstance(nFile, Path):
             if not nFile.is_file():
-                if self.ignore: nFile.touch()
+                if self.__ignore: nFile.touch()
                 else: raise FileNotFoundError("File '{}' not found".format(nFile))
             self.read(nFile)
-            self.path = nFile
+            self.__path = nFile
         else: pass
         self.load()
 
-    def __repr__(self): return str(self.path)
+    def __repr__(self): return str(self.__path)
 
     __str__ = __repr__
 
-    def __getattribute__(self, item): return super(Section, self).__getattribute__(item)
-
-    __getitem__ = __getattribute__
-
     def load(self):
-        self.loading = True
+        self.__loading = True
         for section in self.sections():
             s = Section()
             s.__config = self
@@ -85,7 +67,7 @@ class Config(Section, ConfigParser):
             for option in self.options(section):
                 s[option] = self.loadHintedEntry(section, option)
             self[section] = s
-        self.loading = False
+        self.__loading = False
 
     def loadEntry(self, section, option, fallback=None, datatype=str, subdatatype=str, chunksize=None):
         try:
@@ -110,7 +92,7 @@ class Config(Section, ConfigParser):
                               fallback=hints.pop(0) if len(hints) > 0 else fallback,), clean,
 
     def save(self):
-        with open(self.path, 'w') as configfile: self.write(configfile)
+        with open(self.__path, 'w') as configfile: self.write(configfile)
 
     def saveEntry(self, section, option, value, saveToFile=True):
         if isinstance(value, (list, tuple,)):
