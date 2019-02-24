@@ -4,7 +4,7 @@ __version__ = "0.0.1"
 
 from xml.etree import ElementTree
 from pathlib import Path
-# from battleships.resources.data import DataTypes
+from pmc.resources.io import DataTypes
 
 datatypes = DataTypes()
 

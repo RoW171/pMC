@@ -5,6 +5,10 @@ __version__ = "0.0.1"
 from configparser import ConfigParser
 from io import StringIO, TextIOWrapper
 from pathlib import Path
+from pmc.resources.io import DataTypes
+
+
+datatypes = DataTypes()
 
 
 class Section:
@@ -86,8 +90,8 @@ class Config(Section, ConfigParser):
         hints = option.split(sep)
         clean = hints.pop(0)
         return self.loadEntry(section, option,
-                              datatype=self.datatypes(hints.pop(0)) if len(hints) > 0 else datatype,
-                              subdatatype=self.datatypes(hints.pop(0)) if len(hints) > 0 else subdatatype,
+                              datatype=datatypes(hints.pop(0)) if len(hints) > 0 else datatype,
+                              subdatatype=datatypes(hints.pop(0)) if len(hints) > 0 else subdatatype,
                               chunksize=int(hints.pop(0)) if len(hints) > 0 else chunksize,
                               fallback=hints.pop(0) if len(hints) > 0 else fallback,), clean,
 
@@ -103,12 +107,12 @@ class Config(Section, ConfigParser):
         if saveToFile: self.save()
 
     def saveHintedEntry(self, section, option, value, sep='_', saveToFile=False):
-        datatype = sep + self.datatypes(value)
+        datatype = sep + datatypes(value)
         if isinstance(value, (list, tuple,)):
-            subdatatype = sep + self.datatypes(value[0])
+            subdatatype = sep + datatypes(value[0])
             if isinstance(value[0], (list, tuple,)):
                 chunksize = sep + str(len(value[0]))
-                subdatatype = sep + self.datatypes(value[0][0])
+                subdatatype = sep + datatypes(value[0][0])
             else: chunksize = ''
         else:
             subdatatype = ''
