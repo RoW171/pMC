@@ -1,0 +1,22 @@
+__author__ = "Robin 'r0w' Weiland"
+__date__ = "2019-02-24"
+__version__ = "0.0.1"
+
+from pmc.resources.io.config import Config
+
+
+class Settings:
+    def __init__(self, settingsPath):
+        for name, file, in settingsPath.get().items():
+            self.__dict__[name] = Config(file)
+
+    def __len__(self): return len(self.__dict__)
+
+    def __bool__(self): return bool(self.__dict__)
+
+    def __contains__(self, item): return item in self.__dict__
+
+    def __getitem__(self, item): return self.__getattribute__(item)
+
+
+if __name__ == '__main__': pass
