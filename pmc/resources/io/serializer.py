@@ -38,25 +38,25 @@ class pickle:
 
 class json:
     @staticmethod
-    def dumpFile(path, saveObj):
+    def dumpFile(path, saveObj, **kwargs):
         try:
-            with path.open('wb+') as sfile: jdump(saveObj, sfile, HIGHEST_PROTOCOL)
+            with path.open('wb+') as sfile: jdump(saveObj, sfile, **kwargs)
         except (UnpicklingError,): raise DumpError("failed to dump into the file '{}'".format(path))
 
     @staticmethod
-    def loadFile(path):
+    def loadFile(path, **kwargs):
         try:
-            with path.open('rb') as lfile: return jload(lfile)
+            with path.open('rb') as lfile: return jload(lfile, **kwargs)
         except (PicklingError,): raise LoadError("failed to load the file '{}'".format(path))
 
     @staticmethod
-    def dumpObject(obj):
-        try: return jdumps(obj, HIGHEST_PROTOCOL)
+    def dumpObject(obj, **kwargs):
+        try: return jdumps(obj, **kwargs)
         except (PicklingError,): raise DumpError('failed to dump the object')
 
     @staticmethod
-    def loadObject(obj):
-        try: return jloads(obj)
+    def loadObject(obj, **kwargs):
+        try: return jloads(obj, **kwargs)
         except (UnpicklingError,): raise LoadError('failed to load the object')
 
 
