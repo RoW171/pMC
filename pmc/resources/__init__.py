@@ -5,7 +5,7 @@ __version__ = "0.0.1"
 from pathlib import Path
 from shutil import rmtree
 from os import walk, remove
-from pmc.resources.io.serializer import loadFile
+from pmc.resources.io.serializer import dill
 from pmc.resources.io.zipper import openZip
 from pmc.resources.io.config import Config
 from pmc.resources.io.sql import DataBase
@@ -103,7 +103,7 @@ class File(Base):
 
     def unzip(self, itest=None, checkzip=True): return openZip(self.path, itest, checkzip)
 
-    def unpack(self): return loadFile(self.path)
+    def unpack(self): return dill.loadFile(self.path)
 
     def openConfig(self): return Config(self.path)
 
