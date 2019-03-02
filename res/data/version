@@ -1,0 +1,22 @@
+{
+    "version": {
+        "version": [
+            0,
+            0,
+            1
+        ],
+        "notes": "development - unstable",
+        "state": "stable",
+        "release": 0
+    },
+    "meta": {
+        "date": "2019-3-2",
+        "author": "Robin 'r0w' Weiland"
+    },
+    "paths": {
+        "installed-version": "res\\data\\version"
+    },
+    "urls": {
+        "repo": "https://raw.github.com/RoW171/pMC/master/"
+    }
+}
