@@ -17,6 +17,8 @@
         "installed-version": "res\\data\\version"
     },
     "urls": {
-        "repo": "https://raw.github.com/RoW171/pMC/master/"
+        "repo": "https://raw.github.com/RoW171/pMC/master/",
+        "version": "https://raw.github.com/RoW171/pMC/master/res/data/version",
+        "release": "https://raw.github.com/RoW171/pMC/master/release"
     }
 }

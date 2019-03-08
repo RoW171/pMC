@@ -40,13 +40,13 @@ class json:
     @staticmethod
     def dumpFile(path, saveObj, **kwargs):
         try:
-            with path.open('wb+') as sfile: jdump(saveObj, sfile, **kwargs)
+            with path.open('w+') as sfile: jdump(saveObj, sfile, **kwargs)
         except (UnpicklingError,): raise DumpError("failed to dump into the file '{}'".format(path))
 
     @staticmethod
     def loadFile(path, **kwargs):
         try:
-            with path.open('rb') as lfile: return jload(lfile, **kwargs)
+            with path.open('r') as lfile: return jload(lfile, **kwargs)
         except (PicklingError,): raise LoadError("failed to load the file '{}'".format(path))
 
     @staticmethod

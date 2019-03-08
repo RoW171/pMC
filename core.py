@@ -3,6 +3,7 @@ __date__ = "2019-02-23"
 __version__ = "0.0.1"
 
 from argparse import ArgumentParser
+from pmc.utils.update import update
 
 
 def main():
@@ -24,7 +25,7 @@ def main():
 
     args = parser.parse_args()
 
-    if args.update: pass
+    if args.update: update()
 
 
 if __name__ == '__main__': main()
