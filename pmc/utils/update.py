@@ -84,7 +84,7 @@ def check():
     latest = getLatestVersion()
 
     if isinstance(installed, int):
-        pass  #  error
+        pass  # error
     if isinstance(latest, int):
         if latest == -2:
             pass  # error: network
