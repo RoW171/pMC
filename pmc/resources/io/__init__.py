@@ -17,4 +17,9 @@ class DataTypes:
         if type(arg) == str and len(arg) > 0: return self.names[arg]
         else: return arg.__name__
 
+
+def writeLine(path, line):
+    with path.open('a') as file: file.write(line + '\n')
+
+
 if __name__ == '__main__': pass
