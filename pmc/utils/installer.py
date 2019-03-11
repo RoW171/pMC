@@ -105,6 +105,7 @@ def update():
 
 
 progress = None
+update()
 
 
 if __name__ == '__main__': pass
