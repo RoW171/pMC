@@ -44,6 +44,10 @@ class PeripheralDevice(dict):
             self[name] = d
             self.__dict__[name] = start
 
+    def commands(self):
+        c = self.__dict__.copy()
+        c.remove('game')
+
     def __call__(self, **kwargs):
         for key, value, in kwargs.items(): self.__dict__[key] = value
 
