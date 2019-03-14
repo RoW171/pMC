@@ -2,7 +2,9 @@ __author__ = "Robin 'r0w' Weiland"
 __date__ = "2019-03-10"
 __version__ = "0.0.1"
 
-from ..resources.io.serializer import json, pickle
+# from pmc.resources.io.serializer import json, pickle
+from json import dump as jdump
+from dill import dump as ddump, HIGHEST_PROTOCOL
 from pathlib import Path
 from time import sleep
 from datetime import datetime
@@ -38,7 +40,7 @@ class update:
             }
 
         }
-        json.dumpFile(update.VERSIONFILE, info, indent=4)
+        with update.VERSIONFILE.open('w+') as sfile: jdump(info, sfile, indent=4)
 
     @staticmethod
     def get_release_count(directory='../../release'):
@@ -67,7 +69,11 @@ class rng:
             r.seed(datetime.now())
             l.append(r.getstate())
             sleep(1)
-        pickle.dumpFile(file, l)
+        with file.open('wb+') as sfile: ddump(l, sfile, HIGHEST_PROTOCOL)
+
+
+class textures:
+    def create_textureset(self, ): pass
 
 
 if __name__ == '__main__': pass
