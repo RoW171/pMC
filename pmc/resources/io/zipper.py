@@ -11,8 +11,7 @@ else: compression = ZIP_DEFLATED
 
 
 class ZipFileDamagedError(Exception):
-    def __init__(self, file, occurance):
-        print('zipfile \'{}\' is damaged, first error at {}'.format(file, occurance))
+    def __init__(self, file, occurance): print('zipfile \'{}\' is damaged, first error at {}'.format(file, occurance))
 
 
 class ZipFileIntegrityError(Exception):
