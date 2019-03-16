@@ -18,9 +18,9 @@ class ZipFileDamagedError(Exception):
 class ZipFileIntegrityError(Exception):
     def __init__(self, file, test, found, length, names):
         print('zipfile integrity check failed')
-        print('file: ', file)
-        print('test: ', test)
-        print('found: ', found)
+        print('file:', file)
+        print('test:', test)
+        print('found:', found)
         print('number of content identical:', length)
         print('content names identical:', names)
 
@@ -45,7 +45,7 @@ def print_info(archive):
         print(info.filename)
         print('\tComment:\t', info.comment)
         print('\tModified:\t', datetime(*info.date_time))
-        print('\tSystem:\t\t', info.create_system, '(0 = Windows, 3 = Unix)')
+        print('\tSystem:\t\t', 'Windows' if info.create_system == 0 else 'Unix' if info.create_system == 3 else 'Other')
         print('\tZIP version:\t', info.create_version)
         print('\tCompressed:\t', info.compress_size, 'bytes')
         print('\tUncompressed:\t', info.file_size, 'bytes')
@@ -59,7 +59,7 @@ def createZip(targetpath, contents, comment=''):
     finally: zfile.close()
 
 
-def openZip(file, itest=None, checkzip=True):
+def openZip(file, itest=None, checkzip=True, pwd=''):
     zfile = ZipFile(str(file), mode='r')
     contents = ZipFileContents()
     names = zfile.namelist()
@@ -68,7 +68,7 @@ def openZip(file, itest=None, checkzip=True):
     elif checkzip:
         dtest = zfile.testzip()
         if dtest is not None: raise ZipFileDamagedError(file, dtest)
-    for name in zfile.namelist(): contents[name] = zfile.open(name)
+    for name in zfile.namelist(): contents[name] = zfile.open(name, pwd=bytes(pwd, 'utf-8'))
     return contents
 
 
