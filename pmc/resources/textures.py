@@ -83,9 +83,9 @@ class TextureSet(dict):
         self.corrupted = False
         self.data = Config([coords.read().decode('utf-8')])
         self.texture = load(texture.name, file=texture).get_texture()
-        if self.data.loadEntry('meta', 'tset-version', 0, int) == TSETVERSION:
+        if self.data.loadEntry('info', 'tset-version', 0, int) == TSETVERSION:
             try:
-                self.texture_size = self.data.loadEntry('meta', 'size', 4, int)
+                self.texture_size = self.data.loadEntry('info', 'size', 4, int)
                 for name in self.data.options('coords'):
                     top, bottom, side, = self.data.loadTexCoords(name)
                     self[name.upper()] = tex_coords(top, bottom, side, self.texture_size)

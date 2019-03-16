@@ -10,6 +10,11 @@ from time import sleep
 from datetime import datetime
 from random import Random
 from os import walk
+from configparser import ConfigParser
+from zipfile import ZipFile, ZIP_DEFLATED, ZIP_STORED
+try: import zlib
+except (ImportError,): comression = ZIP_STORED
+else: compression = ZIP_DEFLATED
 
 
 class update:
@@ -73,7 +78,23 @@ class rng:
 
 
 class textures:
-    def create_textureset(self, ): pass
+    @staticmethod
+    def create_textureset(target, image, info, coorddata, ontop, fixed, lists):
+        if not isinstance(target, Path): target = Path(target)
+        if not isinstance(image, Path): image = Path(image)
+        config = ConfigParser()
+        for key, value, in info.items(): config['info'] = {key: value}
+        for name, coords, in coorddata.items():
+            config['coords'] = {name.upper(): ', '.join(list(map(lambda item: item.upper(), coords)))}
+        for top, bottom, in ontop: config['on-top'] = {top.upper(): bottom.upper()}
+        for name, tex, in fixed: config['fixed'] = {name: tex.upper()}
+        for name, items, in lists: config['lists'] = {name: ''.join(list(map(lambda item: item.upper(), items)))}
+        with Path(target).open('w') as configfile: config.write(configfile)
 
+        zfile = ZipFile(str(target), mode='w', compression=compression)
+        try:
+            zfile.write(str(image), compress_type=compression)
+            zfile.writestr('data', config, compress_type=compression)
+        finally: zfile.close()
 
 if __name__ == '__main__': pass
