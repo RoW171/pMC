@@ -1,0 +1,11 @@
+{
+  "texture-set": "set3",
+  "fog-enabled": 1,
+  "world-size": 160,
+  "sky-color": [
+    0.5,
+    0.69,
+    1.0,
+    1.0
+  ]
+}

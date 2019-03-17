@@ -1,0 +1,7 @@
+{
+  "gravity": 20.0,
+  "terminal-velocity": 50,
+  "collision-padding": 0.25,
+  "sector-size": 65,
+  "map-reset": 2000
+}

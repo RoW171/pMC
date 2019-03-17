@@ -1,0 +1,7 @@
+{
+  "debug-lvl": 3,
+  "ticks": 60,
+  "multithreaded-saving": true,
+  "check-for-updates_bool": false,
+  "mouse-sensitivity_float": 0.15
+}

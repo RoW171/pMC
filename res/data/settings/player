@@ -1,0 +1,17 @@
+{
+  "start-pos": [
+    0,
+    5,
+    0
+  ],
+  "start-rot": [
+    0,
+    0
+  ],
+  "height": 2,
+  "start-health": 100,
+  "walking-speed": 5,
+  "flying-speed": 15,
+  "max-jump-height": 1.0,
+  "arm-range": 8
+}

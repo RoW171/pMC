@@ -1,0 +1,10 @@
+{
+  "fov": 90.0,
+  "vsync-enabled": false,
+  "antialiasing": false,
+  "magnification": "near",
+  "perspective-near": 0.1,
+  "perspective-far": 60.0,
+  "fog-start": 20.0,
+  "fog-end": 60.0
+}

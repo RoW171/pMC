@@ -1,0 +1,11 @@
+{
+  "hills-enabled": true,
+  "floor-enabled": true,
+  "floor-depth": 5,
+  "hill-count": 120,
+  "hill-max-height": 6,
+  "hill-min-side": 8,
+  "hill-max-side": 16,
+  "hill-base": -1,
+  "tappering": 1
+}
