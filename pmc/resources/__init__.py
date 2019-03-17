@@ -5,7 +5,7 @@ __version__ = "0.0.1"
 from pathlib import Path
 from shutil import rmtree
 from os import walk, remove
-from pmc.resources.io.serializer import pickle
+from pmc.resources.io.serializer import pickle, json
 from pmc.resources.io.zipper import openZip
 from pmc.resources.io.config import Config
 from pmc.resources.io.sql import DataBase
@@ -105,11 +105,15 @@ class File(Base):
 
     def unpack(self): return pickle.loadFile(self.path)
 
-    def openConfig(self): return Config(self.path)
+    def config(self): return Config(self.path)
 
-    def openXML(self): return XML(self.path)
+    def xml(self): return XML(self.path)
 
-    def openSQL(self): return DataBase(self.path)
+    def sql(self): return DataBase(self.path)
+
+    def json(self, data=None):
+        if data is None: return json.loadFile(self.path)
+        else: json.dumpFile(self.path, data, indent=2)
 
     @property
     def size(self): return self.path.stat().st_size
