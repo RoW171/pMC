@@ -12,6 +12,12 @@ class SettingsFile(dict):
 
     def __getattribute__(self, item): return super(SettingsFile, self).__getitem__(item)
 
+    def __setitem__(self, key, value):
+        super(SettingsFile, self).__setitem__(key, value)
+        self.save()
+
+    __setattribute__ = __setitem__
+
     def load(self): return self._file.json()
 
     def save(self): self._file.json(self.copy())
