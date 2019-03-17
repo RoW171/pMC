@@ -2,7 +2,6 @@ __author__ = "Robin 'r0w' Weiland"
 __date__ = "2019-03-10"
 __version__ = "0.0.1"
 
-# from pmc.resources.io.serializer import json, pickle
 from json import dump as jdump
 from dill import dump as ddump, HIGHEST_PROTOCOL
 from pathlib import Path
