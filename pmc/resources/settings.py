@@ -10,10 +10,10 @@ class SettingsFile(dict):
         self._file = file
         super(SettingsFile, self).__init__(self.load())
 
-    def __getattribute__(self, item): return super(SettingsFile, self).__getitem__(item)
+    def __getattribute__(self, item): return super(SettingsFile, self).__getitem__(item.replace('_', '-'))
 
     def __setitem__(self, key, value):
-        super(SettingsFile, self).__setitem__(key, value)
+        super(SettingsFile, self).__setitem__(key.replace('_', '-'), value)
         self.save()
 
     __setattribute__ = __setitem__
