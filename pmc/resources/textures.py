@@ -51,6 +51,10 @@ class TextureEngine:
         self.textures = self.loadTextures(self.texturePath)
         self.sprites = self.loadSprites(self.spritePath)
 
+    def __call__(self, tset):
+        if tset in self.textures: self.selectedSet = tset
+        else: raise TextureSetNotFound()
+
     def __getitem__(self, item):
         if self.selectedSet is None: return self.textures[item]
         else: return self.textures[self.selectedSet][item]
