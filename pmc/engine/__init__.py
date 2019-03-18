@@ -24,8 +24,8 @@ from pmc.resources.textures import TextureEngine
 
 class Engine:
     def __init__(self):
-        register(self.cleanup)
         self.closemessage = []
+        register(self.cleanup)
 
         self.resources = Ressources(Path('./res'))
         self.data = Settings(self.resources.data.settings)
