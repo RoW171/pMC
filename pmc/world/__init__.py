@@ -18,7 +18,7 @@ class World(dict):
         data['world'] = self.copy()
         return data
 
-    def load(self, data):
+    def loadSaveData(self, data):
         self.update(data.pop('world'))
         self.shown = data['shown']
         self.sectors = data['sectors']
