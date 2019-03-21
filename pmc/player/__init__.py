@@ -26,7 +26,15 @@ class Player:
 
     def getSaveData(self): pass
 
-    def update(self, dt): pass
+    def update(self, deltatime):
+        if not -self.game.data.physics.map_reset < self.position[1] < self.game.data.physics.map_reset:
+            self.position = (0, 5, 0,)
+        speed = self.game.data.player.flying_speed if self.flying else self.game.data.player.walking_speed
+        distance = speed * deltatime
+        if not self.flying: pass
+        dx, dy, dz, = tuple(i * distance for i in self.motionVector())
+        x, y, z, = self.position
+        self.position = self.game.world.collide(self, (x + dx, y + dy, z + dz,))
 
     __call__ = update
 
