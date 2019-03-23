@@ -2,25 +2,28 @@ __author__ = "Robin 'r0w' Weiland"
 __date__ = "2019-03-22"
 __version__ = "0.0.1"
 
+__all__ = ['Health']
 
-class Health:
-    def __init__(self, controller, health=100, dieFunc=None):
-        self.controller = controller
+
+class HealthBase:
+    def __init__(self, player, health, dieFunc):
+        self.player = player
         self.health = health
-        self.dieFunc = dieFunc if dieFunc is not None else self.controller.die
+        self.dieFunc = dieFunc if dieFunc is not None else self.player.die
 
-        if self.controller.data.gameplay.health_enabled:
-            self.heal = self.healEnabled
-            self.suffer = self.sufferEnabled
-            Health.__call__ = self.callEnabled
-        else:
-            self.heal = self.healDisabled
-            self.suffer = self.sufferDisabled
-            Health.__call__ = self.callDisabled
+    def __call__(self, change=0): pass
 
     def __repr__(self): return str(self.health)
 
     __str__ = __repr__
+
+    def suffer(self, modifier=1): pass
+
+    def heal(self, modifier=1): pass
+
+
+class HealthEnabled(HealthBase):
+    def __init__(self, player, health=100, dieFunc=None): super(HealthEnabled, self).__init__(player, health, dieFunc)
 
     def get(self):
         result = []
@@ -32,24 +35,23 @@ class Health:
             health -= 1
         return result
 
-    def callEnabled(self, change=0):
-        self.health += change * 10
-        if self.health <= 0: self.dieFunc()
-        return self.health
-
-    def sufferEnabled(self, modifier=1):
-        self.controller.game.audio('hurt')
+    def suffer(self, modifier=1):
+        self.player.game.audio('hurt')
         self(-modifier)
 
-    def healEnabled(self, modifier=1):
-        self.controller.game.audio('heal')
+    def heal(self, modifier=1):
+        self.player.game.audio('heal')
         self(modifier)
 
-    def callDisabled(self, change=0): pass
 
-    def sufferDisabled(self, modifier=1): pass
+class HealthDisabled(HealthBase):
+    def __init__(self, player, health=100, dieFunc=None): super(HealthDisabled, self).__init__(player, health, dieFunc)
 
-    def healDisabled(self, modifier=1): pass
+
+Health = {
+    True: HealthEnabled,
+    False: HealthDisabled
+}
 
 
 if __name__ == '__main__': pass
