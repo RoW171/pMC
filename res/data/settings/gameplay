@@ -1,5 +1,6 @@
 {
   "health-enabled": false,
-  "survival-inventory": false,
+  "inventory-type": 0,
+  "survival-inventory-space": 10,
   "save-on-death": false
 }
