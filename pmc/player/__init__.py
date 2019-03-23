@@ -3,14 +3,17 @@ __date__ = "2019-03-20"
 __version__ = "0.0.1"
 
 from math import degrees, radians, sin, cos, atan2, sqrt
+from pmc.player.health import Health
+from pmc.player.inventory import Inventory
+from pmc.resources.io.serializer import pickle
 
 
 class Player:
     def __init__(self, game):
         self.game = game
         self.alive = True
-        self.inventory = None
-        self.health = None
+        self.health = Health[self.game.data.gameplay.health_enabled]
+        self.inventory = Inventory[self.game.data.gameplay.inventory_type]
         self.showInventory = False
         self.showCompass = False
         self.position = self.game.data.player.start_pos
@@ -24,7 +27,14 @@ class Player:
 
     def loadSaveData(self): pass
 
-    def getSaveData(self): pass
+    def getSaveData(self):
+        return {
+            'health': pickle.dumpObject(self.health),
+            'inventory': pickle.dumpObject(self.inventory),
+            'position': self.position,
+            'rotation': self.rotation,
+            'height': self.height
+        }
 
     def update(self, deltatime):
         if not -self.game.data.physics.map_reset < self.position[1] < self.game.data.physics.map_reset:
