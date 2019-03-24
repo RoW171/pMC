@@ -37,6 +37,7 @@ class Engine:
         if self.client: self.audio = AudioEngine(self.resources.audio, self.resources.libs.avbin)
         else: self.audio = None
         self.textures = TextureEngine(self.resources.textures, self.resources.img)
+        self.textures(self.data.media.texture_set)
         self.world = None
         self.peripherals = None
 
