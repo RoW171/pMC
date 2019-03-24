@@ -96,4 +96,6 @@ class textures:
             zfile.writestr('data', config, compress_type=compression)
         finally: zfile.close()
 
-if __name__ == '__main__': pass
+if __name__ == '__main__':
+    pass
+    # rng.create_new_pool(Path(r'C:\Users\User\Documents\python\pMC\res\data\rngpool'))
