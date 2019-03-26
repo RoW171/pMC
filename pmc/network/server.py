@@ -3,6 +3,7 @@ __date__ = "2019-03-10"
 __version__ = "0.0.1"
 
 from socket import socket, AF_INET, SOCK_STREAM, SOCK_DGRAM
+from select import select
 from pmc.network.misc import hostname
 from pmc.network.payload import Payload
 from pmc.resources.io.serializer import json
@@ -12,6 +13,26 @@ class Server:
     def __init__(self):
         self.tcp = TCP(self)
         self.udp = UDP(self)
+
+        self.servers = [
+            self.tcp,
+            self.udp,
+        ]
+
+        self.loop()  # TODO: it should't be necessary but this might have to run on a separate thread
+
+    def loop(self):
+        while True:
+            inputready, outputready, exceptready = select(self.servers, [], [])
+            # print(inputready, outputready, exceptready)
+
+            for s in inputready:
+                if s == self.tcp:
+                    self.tcp.accept()
+                    self.tcp.read()
+                elif s == self.udp:
+                    self.udp.read()
+                    self.udp.broadcast()
 
 
 class TCP(socket):
@@ -27,7 +48,9 @@ class TCP(socket):
     def asign(self):
         try: connection, address, = self.accept()
         except (OSError,): pass  # TODO: show error here
-        else: self.clients.append(ClientObject(self, connection, address))
+        else:
+            self.clients.append(ClientObject(self, connection, address))
+            self.write(connection, Payload('accept', '', {'players': len(self.clients), 'seed': None}))
 
     def read(self):
         client = self.clients[0]  # TODO: select something here
@@ -40,7 +63,7 @@ class TCP(socket):
 
     @staticmethod
     def write(to, payload):
-        if type(to) == ClientObject: to = to()
+        if type(to) == ClientObject: to = to.connection
         if type(payload) == Payload: payload = payload.PACK()
         to.sendall(payload)
 
