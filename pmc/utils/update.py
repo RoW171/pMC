@@ -108,7 +108,7 @@ def update():
 def runDownload(release):
     clear()
     directory = Path('./download_{}'.format(release))
-    releasefile = directory / 'version_{}'.format(release)
+    releasefile = directory / 'release_{}'.format(release)
     print('create temporary directory')
     try: directory.mkdir()
     except (FileExistsError,): pass

@@ -58,7 +58,33 @@ class update:
         return release_number
 
     @staticmethod
-    def pack_release(): pass
+    def pack_release(version, notes='', directory=Path('../../release')):
+        # update.create_version_file(version, notes)
+        release_count = update.get_release_count(str(directory)) + 1
+        zf = ZipFile(str(directory / 'release_{}'.format(release_count)), mode='w', compression=compression)
+
+        for root, dirs, files, in walk(str(Path('../../'))):
+            root = Path(root)
+            try: third = root.parts[2]
+            except (IndexError,): third = ''
+            if third in ['pmc', 'res']:
+                for file in files:
+                    f = root / file
+                    if f.suffix == '.pyc': continue
+                    # print(f.resolve(), )
+                    zf.write(str(f.resolve()), arcname=str(Path(*f.parts[2:])), compress_type=compression)
+
+        include = [
+            '../../core.py',
+            '../../LICENSE',
+            '../../README.md'
+        ]
+
+        for file in include:
+            file = Path(file)
+            zf.write(str(file.resolve()), str(str(Path(*file.parts[2:]))), compress_type=compression)
+
+        zf.close()
 
 
 class rng:
@@ -96,6 +122,12 @@ class textures:
             zfile.writestr('data', config, compress_type=compression)
         finally: zfile.close()
 
+
 if __name__ == '__main__':
     pass
+
+    # from timeit import Timer
+    # timer = Timer(lambda: update.pack_release(0))
+    # print(timer.timeit(1))
+
     # rng.create_new_pool(Path(r'C:\Users\User\Documents\python\pMC\res\data\rngpool'))
