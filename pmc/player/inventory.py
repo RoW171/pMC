@@ -12,6 +12,16 @@ class InventoryBase(list):
         self.selectedIndex = 1
         self.selected = None
 
+    def getSaveData(self):
+        data = self.__dict__.copy()
+        del data['player']
+        data['slots'] = list(map(lambda e: e.getSaveData(), self.copy()))
+        return data
+
+    def loadSaveData(self, data):
+        slots = data.pop('slots')
+        for key, value, in data: pass
+
     def __getitem__(self, item):
         try: return super().__getitem__(item - 1)
         except (IndexError,): pass
@@ -136,6 +146,13 @@ class Slot:
     def remove(self):
         if self.count >= 1: self.count -= 1
         else: self.handler.removeSlot(self)
+
+    def getSaveData(self):
+        data = self.__dict__.copy()
+        del data['handler']
+        return data
+
+    def loadSaveData(self): pass
 
 
 if __name__ == '__main__': pass

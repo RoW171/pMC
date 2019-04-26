@@ -4,11 +4,17 @@ __version__ = "0.0.1"
 
 from argparse import ArgumentParser
 from pmc.utils.update import update
+from pmc.utils.uninstall import uninstall
+from pmc.utils.reset import reset
+
+from pmc.game.offlinegame import OfflineGame
 
 
 def main():
     parser = ArgumentParser(description='A puny minecraft clone running with python',
                             epilog='pMC v{} [{}] by {}'.format(__version__, __date__, __author__))
+    parser.add_argument('--seed', dest='seed', nargs=1, default=None, type=str, help='seed for world creation')
+    parser.add_argument('--savegame', dest='savegame', nargs=1, default=None, type=str, help='savefilepath to load the game from')
     parser.add_argument('--server', action='store_true',
                         help='start the game server, runs on console')
     parser.add_argument('--client', action='store_true',
@@ -26,6 +32,12 @@ def main():
     args = parser.parse_args()
 
     if args.update: update()
+    elif args.reset: reset()
+    elif args.uninstall: uninstall()
+
+    elif args.server: pass
+    elif args.client: pass
+    else: OfflineGame(seed=args.seed, savegame=args.savegame, name=args.filename)
 
 
 if __name__ == '__main__': main()

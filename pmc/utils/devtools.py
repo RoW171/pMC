@@ -108,23 +108,53 @@ class textures:
         if not isinstance(target, Path): target = Path(target)
         if not isinstance(image, Path): image = Path(image)
         config = ConfigParser()
-        for key, value, in info.items(): config['info'] = {key: value}
-        for name, coords, in coorddata.items():
-            config['coords'] = {name.upper(): ', '.join(list(map(lambda item: item.upper(), coords)))}
-        for top, bottom, in ontop: config['on-top'] = {top.upper(): bottom.upper()}
-        for name, tex, in fixed: config['fixed'] = {name: tex.upper()}
-        for name, items, in lists: config['lists'] = {name: ''.join(list(map(lambda item: item.upper(), items)))}
+        config.add_section('info')
+        config.add_section('coords')
+        config.add_section('on-top')
+        config.add_section('fixed')
+        config.add_section('lists')
+        for key, value, in info.items(): config.set('info', key, str(value))
+        for name, coords, in coorddata.items(): config.set('coords', name.upper(), ', '.join(list(map(str, coords))))
+        for top, bottom, in ontop.items(): config.set('on-top', top.upper(), bottom.upper())
+        for name, tex, in fixed.items(): config.set('fixed', name, tex.upper())
+        for name, items, in lists.items():
+            config.set('lists', name, ', '.join(list(map(lambda item: item.upper(), items))))
         with Path(target).open('w') as configfile: config.write(configfile)
 
         zfile = ZipFile(str(target), mode='w', compression=compression)
         try:
-            zfile.write(str(image), compress_type=compression)
-            zfile.writestr('data', config, compress_type=compression)
+            zfile.write(str(image), 'texture.png', compress_type=compression)
+            lines = list()
+            for section in config.sections():
+                lines.append('[{}]'.format(section))
+                for option in config.options(section): lines.append('{} = {}'.format(option, config.get(section, option)))
+                lines.append('')
+            zfile.writestr('data', '\n'.join(lines), compress_type=compression)
         finally: zfile.close()
 
 
 if __name__ == '__main__':
-    pass
+    textures.create_textureset('../../res/textures/set0',
+                               r'C:\Users\User\Documents\python\PyMineCraft3\res\textures\set3~\texture.png',
+                               {'creator': "Robin 'r0w' Weiland", 'tset-version': 0, 'size': 4, 'date': '2019-04-18'},
+                               {
+                                   'GRASS': (1, 0, 0, 1, 0, 0,),
+                                   'DIRT': (0, 1, 0, 1, 0, 1,),
+                                   'SAND': (1, 1, 1, 1, 1, 1,),
+                                   'BRICK': (2, 0, 2, 0, 2, 0,),
+                                   'STONE': (2, 1, 2, 1, 2, 1,),
+                                   'LAVA': (3, 0, 3, 0, 3, 0,),
+                                   'WOOD': (3, 2, 3, 2, 3, 1,),
+                                   'CONCRETE': (2, 2, 2, 2, 2, 2,),
+                                   'GLASS': (1, 2, 1, 2, 1, 2,)
+                               },
+                               {'GRASS': 'DIRT'},
+                               {'edge': 'STONE', 'floor': 'GRASS'},
+                               {'terraform': ['BRICK', 'GRASS', 'SAND', 'LAVA', 'CONCRETE'],
+                                'inventory': ['BRICK', 'SAND', 'GRASS', 'DIRT', 'CONCRETE', 'WOOD', 'LAVA', 'GLASS'],
+                                'hurt': ['LAVA'], 'transparent': ['GLASS']}
+                               )
+
 
     # from timeit import Timer
     # timer = Timer(lambda: update.pack_release(0))

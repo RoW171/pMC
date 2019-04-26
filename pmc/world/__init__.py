@@ -3,6 +3,7 @@ __date__ = "2019-03-17"
 __version__ = "0.0.1"
 
 from pmc.world.block import sectorize, normalize, FACES
+from pmc.world.creators import creators
 
 
 class World(dict):
@@ -14,7 +15,7 @@ class World(dict):
 
     def getSaveData(self):
         data = self.__dict__.copy()
-        del data['game'], data['textures']
+        del data['game'], data['textures'],
         data['world'] = self.copy()
         return data
 
@@ -23,6 +24,8 @@ class World(dict):
         self.shown = data['shown']
         self.sectors = data['sectors']
         for position, texture, in self.items(): self.addBlock(position, texture, immediate=position in self.shown)
+
+    def create(self, seed): creators[self.game.data.terrain.creator](self, seed)
 
     def collision(self, player, position, padding=None):
         if padding is None: padding = self.game.data.engine.physics.collision_padding

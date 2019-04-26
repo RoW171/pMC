@@ -14,6 +14,8 @@ class Server:
         self.tcp = TCP(self)
         self.udp = UDP(self)
 
+        self.clients = list()
+
         self.servers = [
             self.tcp,
             self.udp,
@@ -23,10 +25,9 @@ class Server:
 
     def loop(self):
         while True:
-            inputready, outputready, exceptready = select(self.servers, [], [])
-            # print(inputready, outputready, exceptready)
+            readable, writable, exception, = select(self.servers, [], self.servers)
 
-            for s in inputready:
+            for s in readable:
                 if s == self.tcp:
                     self.tcp.accept()
                     self.tcp.read()
@@ -38,8 +39,8 @@ class Server:
 class TCP(socket):
     def __init__(self, controller, address=hostname(), port=12221):
         super(TCP, self).__init__(AF_INET, SOCK_STREAM)
+        self.setblocking(0)
         self.controller = controller
-        self.clients = list()
         self.methods = dict()
 
         self.bind((address, port,))
@@ -49,11 +50,12 @@ class TCP(socket):
         try: connection, address, = self.accept()
         except (OSError,): pass  # TODO: show error here
         else:
-            self.clients.append(ClientObject(self, connection, address))
-            self.write(connection, Payload('accept', '', {'players': len(self.clients), 'seed': None}))
+            self.clients.append(ClientObject(self, connection))
+            self.write(connection, Payload('accept', '', {'players': len(self.controller.clients),
+                                                          'seed': None, 'id': len(self.controller.clients) - 1}))
 
     def read(self):
-        client = self.clients[0]  # TODO: select something here
+        client = self.controller.clients[0]  # TODO: select something here
         try: message = client.connection.recv(2048)
         except (ConnectionResetError,): self.leave(client)
         else:
@@ -68,9 +70,11 @@ class TCP(socket):
         to.sendall(payload)
 
     def broadcast(self, payload):
-        for client in self.clients: self.write(client, payload)
+        for client in self.controller.clients: self.write(client, payload)
 
-    def leave(self, client): pass
+    def leave(self, client):
+        client.connection.close()
+        self.controller.clients.remove(client)
 
 
 class UDP(socket):
@@ -82,21 +86,20 @@ class UDP(socket):
 
     def read(self):
         message = self.recvfrom(2048)
-        if message is not b'':
-            message = json.loadObject(message)
+        if message is not b'': self.controller.process(json.loadObject(message))
 
     def write(self, adddress, message): self.sendto(message, adddress)
 
-    def broadcast(self):
-        for client in self.controller.tcp.clients:
-            pass
+    def broadcast(self, message):
+        for client in self.controller.clients: self.write(client.peer, message)
 
 
 class ClientObject:
-    def __init__(self, server, connection, address):
+    def __init__(self, server, connection):
         self.server = server
         self.connection = connection
-        self.address = address
+        self.peer = self.connection.getpeername()
+        self.local = self.connection.getsockname()
         self.name = None
 
 

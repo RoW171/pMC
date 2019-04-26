@@ -33,7 +33,8 @@ class Player:
             'inventory': pickle.dumpObject(self.inventory),
             'position': self.position,
             'rotation': self.rotation,
-            'height': self.height
+            'height': self.height,
+            'dy': self.dy
         }
 
     def update(self, deltatime):

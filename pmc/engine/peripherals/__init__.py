@@ -7,24 +7,25 @@ class PeripheralDeviceHandler:
     def __init__(self, game):
         self.game = game
         self.devices = {}
-        self.disabled = {}
 
-    def add(self, device, enable=True):
-        self.devices[device.__name__] = device
-        if enable: self.enable(device.__name__)
+    def __getitem__(self, item): return self.devices[item]
 
-    def enable(self, device):
-        device = self.devices.get(device, None)
-        if device is None: return
-        self.game.window.push_handlers(device)
-        try: del self.disabled[device.__name__]
-        except (KeyError,): pass
+    def __setitem__(self, key, value): self.devices[key] = value
 
-    def disable(self, device):
-        device = self.devices.get(device, None)
-        if device is None: return
-        self.game.window.remove_handler(device.__name__, device)
-        self.disabled[device.__name__] = device
+    def __getattribute__(self, item):
+        if item == 'game': return super().__getattribute__(item)
+        else: return self.devices[item]
+
+    def __setattribute__(self, key, value):
+        if key == 'game': super().__setattrib__(key, value)
+        else: self.devices[key] = value
+
+    def add(self, name, device, *args): self.devices[name] = device(*args)
+
+    def push(self, item): self.game.window.push_handlers(self.devices[item])
+
+    def pushAll(self):
+        for device in self.devices.values(): self.game.window.push_handlers(device)
 
 
 def default(*args, **kwargs): pass
@@ -51,7 +52,7 @@ class PeripheralDevice(dict):
     def __call__(self, **kwargs):
         for key, value, in kwargs.items(): self.__dict__[key] = value
 
-    def __repr__(self): return '{obj}-Device'.format(obj=type(self).__name__)
+    def __repr__(self): return '{obj}-Device'.format(obj=self.__class__.__name__)
 
     __str__ = __repr__
 

@@ -77,7 +77,7 @@ class TextureEngine:
     def loadSprites(path):
         collection = Collection()
         collection.exception = SpriteNotFound
-        for name, file, in path.get().items(): collection[file.name] = load(str(file))
+        for name, file, in path.get().items(): collection[file.name] = load(str(file.path))
         return collection
 
 

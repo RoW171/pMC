@@ -1,5 +1,6 @@
 {
   "port": 12221,
-  "clien"
+  "client-tick": 60,
+  "server-tick": 30,
   "player-name": "player-default"
 }

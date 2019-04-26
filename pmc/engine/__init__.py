@@ -20,6 +20,7 @@ from pmc.resources import Ressources
 from pmc.resources.settings import Settings
 from pmc.resources.audio import AudioEngine
 from pmc.resources.textures import TextureEngine
+from pmc.utils.windoweventlogger import WindowEventHandler
 
 
 class Engine:
@@ -30,7 +31,7 @@ class Engine:
         self.resources = Ressources(Path('./res'))
         self.data = Settings(self.resources.data.settings)
 
-        if 'client' not in self.__dict__: self.client = False
+        if 'server' not in self.__dict__: self.client = False
 
         self.window = None
         self.renderer = None
@@ -40,6 +41,9 @@ class Engine:
         self.textures(self.data.media.texture_set)
         self.world = None
         self.peripherals = None
+
+        if self.data.engine.debug_lvl == 3:
+            self.window.push_handlers(WindowEventHandler(self.resources.data.window_events))
 
     def cleanup(self, message=None):
         if message is None: message = self.closemessage

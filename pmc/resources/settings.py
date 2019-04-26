@@ -10,7 +10,9 @@ class SettingsFile(dict):
         self._file = file
         super(SettingsFile, self).__init__(self.load())
 
-    def __getattribute__(self, item): return super(SettingsFile, self).__getitem__(item.replace('_', '-'))
+    def __getattribute__(self, item):
+        if item in ['_file', 'load', 'save']: return super(SettingsFile, self).__getattribute__(item)
+        else: return super(SettingsFile, self).__getitem__(item.replace('_', '-'))
 
     def __setitem__(self, key, value):
         super(SettingsFile, self).__setitem__(key.replace('_', '-'), value)
@@ -26,7 +28,7 @@ class SettingsFile(dict):
 class Settings:
     def __init__(self, settingsPath):
         for name, file, in settingsPath.get().items():
-            self.__dict__[name] = SettingsFile(json.loadFile(file))
+            self.__dict__[name] = SettingsFile(file)
 
     def __len__(self): return len(self.__dict__)
 
